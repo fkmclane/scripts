@@ -1,1 +1,1 @@
-CreateObject("Wscript.Shell").Run "C:\Windows\System32\bash.exe ~ -c 'export DISPLAY=:0; xrdb -merge ~/.Xresources; exec urxvt -e fish'", 0, True
+CreateObject("Wscript.Shell").Run "cmd /c tasklist /nh /fi ""imagename eq Xming.exe"" | find /i ""Xming.exe"" > nul || (start /b ""Xming"" ""%PROGRAMFILES%\Xming\Xming.exe"" :0 -clipboard -multiwindow -nolisten inet6) & ""%LOCALAPPDATA%\Microsoft\WindowsApps\ubuntu.exe"" run ""cd ~; export DISPLAY=:0 && while ! xprop -root &>/dev/null; do sleep 1; done && xrdb -load ~/.Xresources && exec /usr/bin/urxvt -e /usr/bin/fish""", 0, True
