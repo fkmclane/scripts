@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 import subprocess
+import sys
 import time
 
 import urwid
 
 
 class Mode:
-    def __init__(self, name='idle', period=0, sounds=[]):
+    def __init__(self, name='idle', period=0, sounds=[], auto=False):
         self.name = name
         self.period = period
         self.sounds = sounds
+        self.auto = auto
 
 
 class ClockDisplay:
@@ -77,7 +79,10 @@ class ClockDisplay:
             time = self.left / 1000
 
             if time <= self.sound_time:
-                subprocess.Popen(['aplay', self.sound_file], stderr=subprocess.DEVNULL)
+                if sys.platform.startswith('linux'):
+                    subprocess.Popen(['aplay', self.sound_file], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+                elif sys.platform.startswith('darwin'):
+                    subprocess.Popen(['afplay', self.sound_file], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
                 self.update_sound()
 
         self.clock = '{:02}:{:02}.{:1}'.format(minute, second, decisecond)
@@ -88,11 +93,15 @@ class ClockDisplay:
         if self.left == 0:
             self.done = True
 
+            if self.mode.auto:
+                self.update_mode()
+
 
 if __name__ == '__main__':
     modes = [
             Mode('idle'),
-            Mode('autonomous', period=30, sounds=[(30, 'auto_start.wav'), (0, 'auto_stop.wav')]),
+            Mode('autonomous', period=30, sounds=[(30, 'auto_start.wav'), (0, 'auto_stop.wav')], auto=True),
+            Mode('teleop transition', period=8, sounds=[(7, 'trans_start.wav'), (3, 'trans_three.wav'), (2, 'trans_two.wav'), (1, 'trans_one.wav')], auto=True),
             Mode('teleop', period=90, sounds=[(90, 'tele_start.wav'), (30, 'tele_end.wav'), (0, 'tele_stop.wav')]),
     ]
 
