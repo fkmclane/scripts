@@ -1,0 +1,1 @@
+CreateObject("Wscript.Shell").Run "powershell.exe -ExecutionPolicy Bypass -File WSL.ps1", 0, True
