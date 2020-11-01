@@ -11,4 +11,4 @@ while (-Not (& "$Env:ProgramFiles\Xming\xprop.exe" -root)) {
 
 & "$Env:ProgramFiles\Xming\xhost.exe" +(& wsl -e hostname -I) > $null
 
-Start-Process wsl '-e',bash,-c,'"cd ~; export DISPLAY=`ip route list default | head -n1 | sed -e ''s/^default via \([0-9a-f.:]\+\) .*$/\1/''`:0; exec alacritty -e fish"' -NoNewWindow
+Start-Process wsl '-e',bash,-c,'"cd ~; export DISPLAY=`ip route list default | head -n1 | sed -e ''s/^default via \([0-9a-f.:]\+\) .*$/\1/''`:0; exec /usr/bin/x-terminal-emulator -e \"`getent passwd | awk -F: -v user=\"$USER\" ''$1 == user {print $NF}''`\""' -NoNewWindow
